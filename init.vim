@@ -46,6 +46,7 @@ tnoremap <silent> <ESC> <C-\><C-n>
 autocmd BufRead,BufNewFile *.asd set filetype=lisp
 
 nmap <C-M-q> =%
+nmap <M-r> :Denite file/old buffer<CR>
 
 "カラースキーマ
 colorscheme onehalfdark
