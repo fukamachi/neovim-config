@@ -37,8 +37,9 @@ set expandtab          "タブ入力を空白に変換
 set splitright         "画面を縦分割する際に右に開く
 set clipboard=unnamed  "yank した文字列をクリップボードにコピー
 set hls                "検索した文字をハイライトする
-set winfixwidth        "Window幅を固定
-set winfixheight       "Window高さを固定
+
+set wildmenu
+set wildmode=longest,full
 
 "%%でアクティブファイルのディレクトリを展開
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
