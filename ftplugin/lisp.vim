@@ -1,3 +1,5 @@
+nmap <C-M-q> =%
+
 nmap <D-l> :call PareditMoveRight()<CR>mp=%`p
 nmap <D-h> :call PareditMoveLeft()<CR>mp=%`p
 nmap <D-s> :call PareditSplice()<CR>
@@ -15,14 +17,6 @@ function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
                \ "--eval", a:vlime_eval]
 endfunction
 
-function! VlimeBuildServerCommandFor_clrepl(vlime_loader, vlime_eval)
-    return ["ros", "run",
-               \ "--load", "~/.vim/dein/repos/github.com/l04m33/vlime/lisp/load-vlime.lisp",
-               \ "-s", "cl-repl",
-               \ "--eval", a:vlime_eval,
-               \ "--eval", "(cl-repl:main)"]
-endfunction
-
 nmap <silent> <C-g> :call vlime#plugin#CloseWindow("repl")<CR>
 nmap <silent> <M-.> :call vlime#plugin#FindDefinition(vlime#ui#CurAtom())<CR>
 nmap <silent> <C-c><C-c> :call vlime#plugin#SendToREPL(vlime#ui#CurTopExpr())<CR>
@@ -35,4 +29,4 @@ augroup CustomVlimeInputBuffer
     autocmd FileType vlime_input setlocal indentexpr=vlime#plugin#CalcCurIndent()
 augroup end
 
-let g:vlime_indent_keywords = {"if": 3}
+let g:vlime_indent_keywords = {"if": 3, "define-package": 1}

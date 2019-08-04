@@ -17,8 +17,8 @@ call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/neosnippet-snippets')
 
 " その他必要なプラグインはこちらに追加する
-call dein#add('l04m33/vlime', {'rtp': 'vim/'})
-call dein#add('vim-scripts/paredit.vim')
+call dein#add('fukamachi/vlime', {'rtp': 'vim/'})
+call dein#add('kovisoft/paredit')
 call dein#add('sonph/onehalf', {'rtp': 'vim/'})
 call dein#add('cocopon/iceberg.vim')
 call dein#add('vim-airline/vim-airline')
@@ -37,16 +37,16 @@ set expandtab          "タブ入力を空白に変換
 set splitright         "画面を縦分割する際に右に開く
 set clipboard=unnamed  "yank した文字列をクリップボードにコピー
 set hls                "検索した文字をハイライトする
-set autochdir          "常に編集ファイルをカレントディレクトリにする
 set winfixwidth        "Window幅を固定
 set winfixheight       "Window高さを固定
-set nolisp             "vlimeのindentexprを使うため無効に
+
+"%%でアクティブファイルのディレクトリを展開
+cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+
+"Terminal Mode
 tnoremap <silent> <ESC> <C-\><C-n>
 
 autocmd BufRead,BufNewFile *.asd set filetype=lisp
-
-nmap <C-M-q> =%
-nmap <M-r> :Denite file/old buffer<CR>
 
 "カラースキーマ
 colorscheme onehalfdark
@@ -58,6 +58,7 @@ let g:auto_save = 1
 let g:auto_save_in_insert_mode = 0
 let g:auto_save_silent = 1
 
+nmap <M-r> :Denite file/old buffer<CR>
 nmap <silent> <C-t> :<C-u>Denite file/rec<CR>
 nmap <silent> <C-p><C-t> :<C-u>DeniteProject file/rec<CR>
 nmap <silent> <C-u> :<C-u>Denite buffer<CR>
