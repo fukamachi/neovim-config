@@ -13,7 +13,7 @@ let g:vlime_cl_use_terminal = v:true
 let g:vlime_cl_impl = "ros"
 function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
     return ["rlwrap", "ros", "run",
-               \ "--load", "~/.vim/dein/repos/github.com/l04m33/vlime/lisp/load-vlime.lisp",
+               \ "--load", "~/.vim/dein/repos/github.com/fukamachi/vlime/lisp/load-vlime.lisp",
                \ "--eval", a:vlime_eval]
 endfunction
 
@@ -29,4 +29,4 @@ augroup CustomVlimeInputBuffer
     autocmd FileType vlime_input setlocal indentexpr=vlime#plugin#CalcCurIndent()
 augroup end
 
-let g:vlime_indent_keywords = {"if": 3, "define-package": 1}
+let g:vlime_indent_keywords = {"define-package": 1}
