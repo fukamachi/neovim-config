@@ -17,7 +17,7 @@ call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/neosnippet-snippets')
 
 " その他必要なプラグインはこちらに追加する
-call dein#add('fukamachi/vlime', {'rtp': 'vim/'})
+call dein#add('fukamachi/vlime', {'rtp': 'vim/', 'on_cmd': ['VlimeStart', 'VlimeQlotExec']})
 call dein#add('kovisoft/paredit')
 call dein#add('sonph/onehalf', {'rtp': 'vim/'})
 call dein#add('cocopon/iceberg.vim')
@@ -27,8 +27,8 @@ call dein#add('Shougo/denite.nvim')
 
 call dein#end()
 
-let mapleader=","
-let maplocalleader=","
+let mapleader = "\<Space>"
+let maplocalleader = "\<Space>"
 
 set autoindent         "改行時に自動でインデントする
 set tabstop=4          "タブを何文字の空白に変換するか
@@ -41,13 +41,17 @@ set hls                "検索した文字をハイライトする
 set wildmenu
 set wildmode=longest,full
 
+"Command-Line Mode
 "%%でアクティブファイルのディレクトリを展開
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+cnoremap <C-d> <Del>
 
 "Terminal Mode
 tnoremap <silent> <ESC> <C-\><C-n>
-
-autocmd BufRead,BufNewFile *.asd set filetype=lisp
 
 "カラースキーマ
 colorscheme onehalfdark
@@ -55,14 +59,16 @@ autocmd ColorScheme * highlight Normal ctermfg=grey ctermbg=black
 autocmd ColorScheme * highlight Comment ctermfg=33
 let g:airline_powerline_fonts = 1
 
+"AutoSave
 let g:auto_save = 1
 let g:auto_save_in_insert_mode = 0
 let g:auto_save_silent = 1
 
-nmap <M-r> :Denite file/old buffer<CR>
-nmap <silent> <C-t> :<C-u>Denite file/rec<CR>
-nmap <silent> <C-p><C-t> :<C-u>DeniteProject file/rec<CR>
-nmap <silent> <C-u> :<C-u>Denite buffer<CR>
+"Denite
+nnoremap <M-r> :Denite file/old buffer<CR>
+nnoremap <silent> <C-t> :<C-u>Denite file/rec<CR>
+nnoremap <silent> <C-p><C-t> :<C-u>DeniteProject file/rec<CR>
+nnoremap <silent> <C-u> :<C-u>Denite buffer<CR>
 autocmd FileType denite call s:denite_my_settings()
 function! s:denite_my_settings() abort
   nnoremap <silent><buffer><expr> <CR>
@@ -77,4 +83,45 @@ function! s:denite_my_settings() abort
   \ denite#do_map('open_filter_buffer')
   nnoremap <silent><buffer><expr> <Space>
   \ denite#do_map('toggle_select').'j'
+endfunction
+
+nnoremap <M-x> :call<Space>
+map q: :q
+
+"Common Lisp
+autocmd BufRead,BufNewFile *.asd set filetype=lisp
+nnoremap <silent> <Leader>rr :call VlimeStart()<CR>
+nnoremap <silent> <Leader>rq :call VlimeQlotExec()<CR>
+nnoremap <silent> <M-i> :call vlime#plugin#SendToREPL()<CR>
+
+"vlime-input-bufferで補完とインデントを有効に
+augroup CustomVlimeInputBuffer
+    autocmd!
+    autocmd FileType vlime_input inoremap <silent> <buffer> <Tab> <C-r>=vlime#plugin#VlimeKey("tab")<CR>
+    autocmd FileType vlime_input setlocal omnifunc=vlime#plugin#CompleteFunc
+    autocmd FileType vlime_input setlocal indentexpr=vlime#plugin#CalcCurIndent()
+augroup end
+
+let g:vlime_cl_impl = "ros"
+let g:vlime_cl_use_terminal = v:true
+let g:vlime_indent_keywords = {"define-package": 1}
+
+function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
+    return ["rlwrap", "ros", "run",
+               \ "--load", "~/.vim/dein/repos/github.com/fukamachi/vlime/lisp/load-vlime.lisp",
+               \ "--eval", a:vlime_eval]
+endfunction
+
+function! VlimeBuildServerCommandFor_qlot(vlime_loader, vlime_eval)
+    return ["rlwrap", "qlot", "exec", "ros", "run",
+               \ "--load", "~/.vim/dein/repos/github.com/fukamachi/vlime/lisp/load-vlime.lisp",
+               \ "--eval", a:vlime_eval]
+endfunction
+
+function! VlimeStart()
+    call vlime#server#New(v:true, get(g:, "vlime_cl_use_terminal", v:false))
+endfunction
+
+function! VlimeQlotExec()
+    call vlime#server#New(v:true, get(g:, "vlime_cl_use_terminal", v:false), v:null, "qlot")
 endfunction
