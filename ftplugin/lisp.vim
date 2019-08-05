@@ -17,9 +17,31 @@ function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
                \ "--eval", a:vlime_eval]
 endfunction
 
-nmap <silent> <C-g> :call vlime#plugin#CloseWindow("repl")<CR>
-nmap <silent> <M-.> :call vlime#plugin#FindDefinition(vlime#ui#CurAtom())<CR>
-nmap <silent> <C-c><C-c> :call vlime#plugin#SendToREPL(vlime#ui#CurTopExpr())<CR>
+function! VlimeBuildServerCommandFor_qlot(vlime_loader, vlime_eval)
+    return ["rlwrap", "qlot", "exec", "ros", "run",
+               \ "--load", "~/.vim/dein/repos/github.com/fukamachi/vlime/lisp/load-vlime.lisp",
+               \ "--eval", a:vlime_eval]
+endfunction
+
+function! VlimeQlotExec()
+    call vlime#server#New(v:true, get(g:, "vlime_cl_use_terminal", v:false), v:null, "qlot")
+endfunction
+
+function! VlimeStartImpl()
+    call inputsave()
+    let cl_impl = input('Implementation (' . g:vlime_cl_impl . '): ')
+    call inputrestore()
+    if cl_impl == ''
+        let cl_impl = g:vlime_cl_impl
+    endif
+    call vlime#server#New(v:true, get(g:, "vlime_cl_use_terminal", v:false), v:null, cl_impl)
+endfunction
+
+nnoremap <silent> <Leader>rq :call VlimeQlotExec()<CR>
+
+nnoremap <silent> <C-g> :call vlime#plugin#CloseWindow("repl")<CR>
+nnoremap <silent> <M-.> :call vlime#plugin#FindDefinition(vlime#ui#CurAtom())<CR>
+nnoremap <silent> <C-c><C-c> :call vlime#plugin#SendToREPL(vlime#ui#CurTopExpr())<CR>
 
 "vlime-input-bufferで補完とインデントを有効に
 augroup CustomVlimeInputBuffer
