@@ -17,13 +17,14 @@ call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/neosnippet-snippets')
 
 " その他必要なプラグインはこちらに追加する
-call dein#add('fukamachi/vlime', {'rtp': 'vim/', 'on_cmd': ['VlimeStart', 'VlimeQlotExec']})
+call dein#add('fukamachi/vlime', {'rtp': 'vim/', 'on_cmd': ['VlimeStart', 'VlimeQlotExec']}, {'rev': 'develop'})
 call dein#add('kovisoft/paredit')
 call dein#add('sonph/onehalf', {'rtp': 'vim/'})
 call dein#add('cocopon/iceberg.vim')
 call dein#add('vim-airline/vim-airline')
 call dein#add('vim-scripts/vim-auto-save')
 call dein#add('Shougo/denite.nvim')
+call dein#add('yuratomo/w3m.vim')
 
 call dein#end()
 
@@ -37,6 +38,9 @@ set expandtab          "タブ入力を空白に変換
 set splitright         "画面を縦分割する際に右に開く
 set clipboard=unnamed  "yank した文字列をクリップボードにコピー
 set hls                "検索した文字をハイライトする
+set noswapfile
+set noshowmode
+set cursorline
 
 set wildmenu
 set wildmode=longest,full
