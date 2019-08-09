@@ -1,10 +1,9 @@
 nmap <C-M-q> =%
 
-nnoremap <M-l> :call PareditMoveRight()<CR>
-nnoremap <M-h> :call PareditMoveLeft()<CR>
-nnoremap <M-s> :call PareditSplice()<CR>
-inoremap <M-l> <Esc>:call PareditMoveRight()<CR>
+inoremap <M-l> <Esc>:call <Plug>(sexp_capture_next_element)<CR>
 nnoremap <silent> <C-g> :call vlime#plugin#CloseWindow("")<CR>
+nnoremap <silent> <LocalLeader>sl :call vlime#plugin#LoadFile(expand("%:p"))<CR>
+nnoremap <silent> <LocalLeader>vi :call vlime#plugin#InteractionMode()<CR>
 
 "http://koturn.hatenablog.com/entry/2015/07/18/101510
 function! s:input(...) abort

@@ -18,7 +18,9 @@ call dein#add('Shougo/neosnippet-snippets')
 
 " その他必要なプラグインはこちらに追加する
 call dein#add('fukamachi/vlime', {'rtp': 'vim/', 'on_cmd': ['VlimeStart', 'VlimeQlotExec']}, {'rev': 'develop'})
-call dein#add('kovisoft/paredit')
+call dein#add('guns/vim-sexp')
+call dein#add('tpope/vim-repeat')
+call dein#add('tpope/vim-surround')
 call dein#add('sonph/onehalf', {'rtp': 'vim/'})
 call dein#add('cocopon/iceberg.vim')
 call dein#add('vim-airline/vim-airline')
@@ -96,7 +98,15 @@ map q: :q
 autocmd BufRead,BufNewFile *.asd set filetype=lisp
 nnoremap <silent> <Leader>rr :call VlimeStart()<CR>
 nnoremap <silent> <Leader>rq :call VlimeQlotExec()<CR>
-nnoremap <silent> <M-i> :call vlime#plugin#SendToREPL()<CR>
+
+let g:sexp_mappings = {
+    \ 'sexp_swap_list_backward':        '',
+    \ 'sexp_swap_list_forward':         '',
+    \ 'sexp_swap_element_backward':     '',
+    \ 'sexp_swap_element_forward':      '',
+    \ 'sexp_capture_prev_element':      '<M-h>',
+    \ 'sexp_capture_next_element':      '<M-l>',
+    \ }
 
 "vlime-input-bufferで補完とインデントを有効に
 augroup CustomVlimeInputBuffer
