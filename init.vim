@@ -116,7 +116,7 @@ augroup CustomVlimeInputBuffer
     autocmd FileType vlime_input setlocal indentexpr=vlime#plugin#CalcCurIndent()
 augroup end
 
-let g:vlime_cl_impl = "ros"
+let g:vlime_cl_impl = "lem"
 let g:vlime_cl_use_terminal = v:true
 let g:vlime_indent_keywords = {"define-package": 1}
 
@@ -130,6 +130,12 @@ function! VlimeBuildServerCommandFor_qlot(vlime_loader, vlime_eval)
     return ["rlwrap", "qlot", "exec", "ros", "run",
                \ "--load", "~/.vim/dein/repos/github.com/fukamachi/vlime/lisp/load-vlime.lisp",
                \ "--eval", a:vlime_eval]
+endfunction
+
+function! VlimeBuildServerCommandFor_lem(vlime_loader, vlime_eval)
+    return ["ros", "-s", "lem-ncurses",
+               \ "--load", "~/.vim/dein/repos/github.com/fukamachi/vlime/lisp/load-vlime.lisp",
+               \ "--eval", a:vlime_eval, "--eval", "(lem:lem)"]
 endfunction
 
 function! VlimeStart()
