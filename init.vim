@@ -12,7 +12,7 @@ call dein#add('Shougo/dein.vim')
 call dein#add('Shougo/vimproc.vim', {'build': 'make'})
 
 " 補完、スニペット
-call dein#add('Shougo/neocomplete.vim')
+call dein#add('Shougo/deoplete.nvim')
 call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/neosnippet-snippets')
 
@@ -27,11 +27,18 @@ call dein#add('vim-airline/vim-airline')
 call dein#add('vim-scripts/vim-auto-save')
 call dein#add('Shougo/denite.nvim')
 call dein#add('yuratomo/w3m.vim')
+call dein#add('ntpeters/vim-better-whitespace')
 
 call dein#end()
 
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
+
+let g:deoplete#enable_at_startup = 1
+
+"行末空白の削除
+let g:better_whitespace_filetypes_blacklist = ['vlime_input', 'diff', 'gitcommit', 'unite', 'qf', 'help']
+let g:better_whitespace_enabled=1
 
 set autoindent         "改行時に自動でインデントする
 set tabstop=4          "タブを何文字の空白に変換するか
@@ -45,7 +52,7 @@ set noshowmode
 set cursorline
 
 set wildmenu
-set wildmode=longest,full
+set wildmode=longest:full,full
 
 "Command-Line Mode
 "%%でアクティブファイルのディレクトリを展開
@@ -104,16 +111,23 @@ let g:sexp_mappings = {
     \ 'sexp_swap_list_forward':         '',
     \ 'sexp_swap_element_backward':     '',
     \ 'sexp_swap_element_forward':      '',
-    \ 'sexp_capture_prev_element':      '<M-h>',
-    \ 'sexp_capture_next_element':      '<M-l>',
+    \ 'sexp_capture_prev_element':      '',
+    \ 'sexp_capture_next_element':      '',
     \ }
+nmap <M-h> )<Plug>(sexp_emit_tail_element) <Plug>(sexp_indent) <C-o><C-o>
+nmap <M-l> <Plug>(sexp_capture_next_element) <Plug>(sexp_indent) <C-o><C-o>
 
-"vlime-input-bufferで補完とインデントを有効に
 augroup CustomVlimeInputBuffer
     autocmd!
+    "vlime-input-bufferで補完とインデントを有効に
     autocmd FileType vlime_input inoremap <silent> <buffer> <Tab> <C-r>=vlime#plugin#VlimeKey("tab")<CR>
     autocmd FileType vlime_input setlocal omnifunc=vlime#plugin#CompleteFunc
     autocmd FileType vlime_input setlocal indentexpr=vlime#plugin#CalcCurIndent()
+augroup end
+
+augroup CustomVlimeArglistBuffer
+    autocmd!
+    autocmd FileType vlime_arglist setlocal nocursorline
 augroup end
 
 let g:vlime_cl_impl = "lem"
