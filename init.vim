@@ -17,7 +17,7 @@ call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/neosnippet-snippets')
 
 " その他必要なプラグインはこちらに追加する
-call dein#add('fukamachi/vlime', {'rtp': 'vim/', 'on_cmd': ['VlimeStart', 'VlimeQlotExec']}, {'rev': 'develop'})
+call dein#add('fukamachi/vlime', {'rtp': 'vim/', 'on_cmd': ['VlimeStart', 'VlimeQlotExec']})
 call dein#add('guns/vim-sexp')
 call dein#add('tpope/vim-repeat')
 call dein#add('tpope/vim-surround')
@@ -28,17 +28,29 @@ call dein#add('vim-scripts/vim-auto-save')
 call dein#add('Shougo/denite.nvim')
 call dein#add('yuratomo/w3m.vim')
 call dein#add('ntpeters/vim-better-whitespace')
+call dein#add('thinca/vim-quickrun')
+call dein#add('Shougo/vimproc')
 
 call dein#end()
 
 let mapleader = "\<Space>"
 let maplocalleader = "\<Space>"
 
-let g:deoplete#enable_at_startup = 1
-
-"行末空白の削除
-let g:better_whitespace_filetypes_blacklist = ['vlime_input', 'diff', 'gitcommit', 'unite', 'qf', 'help']
-let g:better_whitespace_enabled=1
+"QuickRun
+let g:quickrun_no_default_key_mappings = 1
+if !has("g:quickrun_config")
+	let g:quickrun_config = {}
+endif
+let g:quickrun_config._ = {
+    \ 'runner': 'vimproc',
+    \ 'outputter': 'buffer',
+    \ 'outputter/buffer/running_mark': 'Running...',
+    \ 'outputter/buffer/split' : 'botright 15sp',
+	\ 'outputter/buffer/close_on_empty' : 1,
+    \ 'outputter/buffer/into': 1,
+\ }
+autocmd FileType quickrun setlocal nocursorline
+nnoremap <silent> <C-x><C-x> :QuickRun -mode n<CR>
 
 set autoindent         "改行時に自動でインデントする
 set tabstop=4          "タブを何文字の空白に変換するか
@@ -53,6 +65,13 @@ set cursorline
 
 set wildmenu
 set wildmode=longest:full,full
+
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#auto_complete_delay = 500
+
+"行末空白の削除
+let g:better_whitespace_filetypes_blacklist = ['vlime_input', 'quickrun', 'diff', 'gitcommit', 'unite', 'qf', 'help']
+let g:better_whitespace_enabled=1
 
 "Command-Line Mode
 "%%でアクティブファイルのディレクトリを展開
@@ -98,7 +117,6 @@ function! s:denite_my_settings() abort
   \ denite#do_map('toggle_select').'j'
 endfunction
 
-nnoremap <M-x> :call<Space>
 map q: :q
 
 "Common Lisp
@@ -106,33 +124,8 @@ autocmd BufRead,BufNewFile *.asd set filetype=lisp
 nnoremap <silent> <Leader>rr :call VlimeStart()<CR>
 nnoremap <silent> <Leader>rq :call VlimeQlotExec()<CR>
 
-let g:sexp_mappings = {
-    \ 'sexp_swap_list_backward':        '',
-    \ 'sexp_swap_list_forward':         '',
-    \ 'sexp_swap_element_backward':     '',
-    \ 'sexp_swap_element_forward':      '',
-    \ 'sexp_capture_prev_element':      '',
-    \ 'sexp_capture_next_element':      '',
-    \ }
-nmap <M-h> )<Plug>(sexp_emit_tail_element) <Plug>(sexp_indent) <C-o><C-o>
-nmap <M-l> <Plug>(sexp_capture_next_element) <Plug>(sexp_indent) <C-o><C-o>
-
-augroup CustomVlimeInputBuffer
-    autocmd!
-    "vlime-input-bufferで補完とインデントを有効に
-    autocmd FileType vlime_input inoremap <silent> <buffer> <Tab> <C-r>=vlime#plugin#VlimeKey("tab")<CR>
-    autocmd FileType vlime_input setlocal omnifunc=vlime#plugin#CompleteFunc
-    autocmd FileType vlime_input setlocal indentexpr=vlime#plugin#CalcCurIndent()
-augroup end
-
-augroup CustomVlimeArglistBuffer
-    autocmd!
-    autocmd FileType vlime_arglist setlocal nocursorline
-augroup end
-
 let g:vlime_cl_impl = "lem"
 let g:vlime_cl_use_terminal = v:true
-let g:vlime_indent_keywords = {"define-package": 1}
 
 function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
     return ["rlwrap", "ros", "run",

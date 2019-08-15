@@ -1,9 +1,39 @@
-nmap <C-M-q> =-
+"インデント設定
+let g:vlime_indent_keywords = {"define-package": 1}
 
-nnoremap <silent> <C-g> :call vlime#plugin#CloseWindow("")<CR>
+"キーマッピング設定
+nmap <C-M-q> =-
 nnoremap <silent> <LocalLeader>sl :call vlime#plugin#LoadFile(expand("%:p"))<CR>
 nnoremap <silent> <LocalLeader>vi :call vlime#plugin#InteractionMode()<CR>
+"<C-g>で不要なバッファウィンドウを消す
+nnoremap <silent> <C-g> :call vlime#plugin#CloseWindow("")<CR>:<C-u>bw! \[quickrun\ output\]<CR>
+"Returnするときに行末の空行を消す
 inoremap <silent> <Return> <CR><C-o>:StripWhitespace<CR>
+
+"QuickRunでRoveを走らせる
+let g:quickrun_config.lisp = {'exec' : 'rove --disable-colors *.asd'}
+
+"<C-x><C-x> で asdf:test-system を走らせる
+function! CurrentProjectName()
+    return system("ls *.asd | head -n 1 | sed 's/\.[^\.]*$//'")
+endfunction
+function! RunTestSystem()
+    call vlime#plugin#SendToREPL('(asdf:test-system :' . CurrentProjectName() . ')')
+endfunction
+nnoremap <silent> <C-x><C-x> :call RunTestSystem()<CR>
+
+augroup CustomVlimeInputBuffer
+    autocmd!
+    "vlime-input-bufferで補完とインデントを有効に
+    autocmd FileType vlime_input inoremap <silent> <buffer> <Tab> <C-r>=vlime#plugin#VlimeKey("tab")<CR>
+    autocmd FileType vlime_input setlocal omnifunc=vlime#plugin#CompleteFunc
+    autocmd FileType vlime_input setlocal indentexpr=vlime#plugin#CalcCurIndent()
+augroup end
+
+augroup CustomVlimeArglistBuffer
+    autocmd!
+    autocmd FileType vlime_arglist setlocal nocursorline
+augroup end
 
 "http://koturn.hatenablog.com/entry/2015/07/18/101510
 function! s:input(...) abort
@@ -20,6 +50,7 @@ function! s:input(...) abort
     endtry
 endfunction
 
+"処理系を選択して起動
 function! VlimeStartImpl()
     call inputsave()
     let cl_impl = s:input('Implementation (' . g:vlime_cl_impl . '): ')
@@ -32,6 +63,23 @@ function! VlimeStartImpl()
     endif
 endfunction
 
+"vim-sexpの設定
+let g:sexp_mappings = {
+    \ 'sexp_swap_list_backward':        '',
+    \ 'sexp_swap_list_forward':         '',
+    \ 'sexp_swap_element_backward':     '',
+    \ 'sexp_swap_element_forward':      '',
+    \ 'sexp_capture_prev_element':      '',
+    \ 'sexp_capture_next_element':      '',
+    \ 'sexp_splice_list':             '',
+    \ }
+"飲み込み・吐き出し・展開時にインデントを修正
+nmap <M-h> )<Plug>(sexp_emit_tail_element) <Plug>(sexp_indent) <C-o><C-o>
+nmap <M-l> <Plug>(sexp_capture_next_element) <Plug>(sexp_indent) <C-o><C-o>
+nmap <LocalLeader>@ <Plug>(sexp_splice_list) <Plug>(sexp_indent) <C-o><C-o>
+
+"Vlimeのキーマッピング
+"一部だけ上書きなどができないためコピーして編集している
 let g:vlime_default_mappings = {
             \ 'lisp': [
                 \ ['n', '<LocalLeader>'.'?', ':call vlime#ui#ShowQuickRef("lisp")<cr>',
