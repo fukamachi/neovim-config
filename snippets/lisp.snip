@@ -1,0 +1,136 @@
+snippet kyopro
+abbr Template for competitive programming
+options head
+    (defun solve (${1:#:arguments})
+      ${0:TARGET})
+    
+    #-swank
+    (let* (${2:#:read from stdin})
+      (format t "~A~%" (solve $1)))
+
+snippet stacksize
+abbr Increase the stack size
+options head
+    #-swank
+    (unless (member :child-sbcl *features*)
+      (quit
+       :unix-status
+       (process-exit-code
+        (run-program *runtime-pathname*
+                     \`("--control-stack-size" "128MB"
+                       "--noinform" "--disable-ldb" "--lose-on-corruption" "--end-runtime-options"
+                       "--eval" "(push :child-sbcl *features*)"
+                       "--script" ,(namestring *load-pathname*))
+                     :output t :error t :input t))))
+    ${0}
+
+snippet defpackage
+abbr (defpackage ...)
+options head
+    (defpackage #:${1:#:package-name}
+      (:use #:cl${2})${3})
+    (in-package #:$1)
+
+snippet import
+abbr (:import-from ...)
+    (:import-from #:${1:package-name}${2})
+
+snippet println
+abbr (format stream "~A~%" ...)
+alias formatln
+    (format t "~A~%" ${1:TARGET})
+
+snippet println-list
+abbr (format stream "~{~A~^ ~}" ...)
+alias formatln-list
+    (format t "~{~A~^ ~}" ${1:TARGET})
+
+snippet warn
+abbr (warn "~S" ...)
+    (warn "~S" ${1:TARGET})
+
+snippet defun
+abbr (defun name lambda-list ...)
+options head
+    (defun ${1:#:name} (${2:#:arguments})
+      ${0})
+
+snippet defmacro
+abbr (defmacro name lambda-list ...)
+options head
+    (defmacro ${1:#:name} (${2:#:arguments)
+      ${0})
+
+snippet defmethod
+abbr (defmethod name lambda-list ...)
+options head
+    (defmethod ${1:#:name} (${2:#:arguments})
+      ${0})
+
+snippet defgeneric
+abbr (defgeneric name lambda-list ...)
+options head
+    (defgeneric ${1:#:name} (${2:#:arguments})
+      (:method (${3:$2})
+        ${0}))
+
+snippet defclass
+abbr (defclass class-name (super-class*) (slot-specifier*) ...)
+options head
+    (defclass ${1:#:class-name} (${2:#:super-class*})
+      (${3:#:slot-specifier*})${0})
+
+snippet slot-def
+abbr (slot-name :initarg ...)
+options word indent
+    (${1:#:slot-name} :initarg :$1
+                      :initform ${2:nil}
+                      :accessor ${3:$1})
+
+snippet :metaclass
+abbr (:metaclass metaclass-name)
+options head
+    (:metaclass ${1:#:metaclass-name})
+
+snippet define-condition
+abbr (define-condition name (parent-type*) (slot-spec*) ...)
+options head
+    (define-condition ${1:#:name} (${2:#:parent-type*})
+      (${3:#:slot-spec*})${0})
+
+snippet :report
+abbr (:report (lambda (condition stream) ...))
+options head indent
+    (:report (lambda (condition stream)
+               ${0}))
+
+snippet destructuring-bind
+abbr (destructuring-bind lambda-list expression ...)
+alias dbind
+    (destructuring-bind (${1:#:lambda-list})
+        ${2:#:expression)}
+      ${0})
+
+snippet multiple-value-bind
+abbr (multiple-value-bind (var*) values-form ...)
+alias mvbind
+    (multiple-value-bind (${1:#:var*})
+        ${2:#:values-form}
+      ${0})
+
+snippet lambda
+abbr (lambda lambda-list ...)
+alias la
+    (lambda (${1:#:lambda-list}) ${2:#:form*})
+
+snippet flet
+abbr (flet ((function-name lambda-list ...)) ...)
+    (flet ((${1:#:function-name} (${2:#:lambda-list})
+             ${3:#:form*}))
+      ${0})
+
+snippet labels
+abbr (labels ((function-name lambda-list ...)) ...)
+    (labels ((${1:#:function-name} (${2:#:lambda-list})
+               ${3:#:form*}))
+      ${0})
