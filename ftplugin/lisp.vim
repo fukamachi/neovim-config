@@ -1,6 +1,3 @@
-"インデント設定
-let g:vlime_indent_keywords = {"define-package": 1, "block": 1, "restart-bind": 1}
-
 function! CloseMinorWindows()
     call vlime#plugin#CloseWindow("")
     try
@@ -10,14 +7,12 @@ function! CloseMinorWindows()
 endfunction
 
 "キーマッピング設定
-nmap <C-M-q> =-
 nnoremap <silent> <LocalLeader>sl :call vlime#plugin#LoadFile(expand("%:p"))<CR>
 nnoremap <silent> <LocalLeader>vi :call vlime#plugin#InteractionMode()<CR>
 "<C-g>で不要なバッファウィンドウを消す
-"nnoremap <silent> <C-g> :call vlime#plugin#CloseWindow("")<CR>:<C-u>bw! \[quickrun\ output\]<CR>
 nnoremap <silent> <C-g> :call CloseMinorWindows()<CR>
 "Returnするときに行末の空行を消す
-autocmd! FileType lisp inoremap <silent> <Return> <CR><C-o>:StripWhitespace<CR>
+autocmd! FileType lisp imap <silent> <Return> <CR><C-o>:StripWhitespace<CR>
 
 augroup CustomVlimeInputBuffer
     autocmd!
@@ -72,12 +67,38 @@ let g:sexp_mappings = {
     \ 'sexp_insert_closing_round':      '',
     \ }
 "飲み込み・吐き出し・展開時にインデントを修正
-"ポインタを記録して (mp & `p)
-"動かないようにしていたがたまに誤作動するっぽいのでやめる
-"getpos, setpos でできそうだが試していない
-nmap <M-h> <Plug>(sexp_emit_tail_element) <Plug>(sexp_indent)
-nmap <M-l> <Plug>(sexp_capture_next_element) <Plug>(sexp_indent)
-nmap <LocalLeader>@ <Plug>(sexp_splice_list) <Plug>(sexp_indent)
+nnoremap <silent> <M-h> :call SexpMoveLeft()<CR>
+nnoremap <silent> <M-l> :call SexpMoveRight()<CR>
+nnoremap <silent> <LocalLeader>@ :call SexpSplice()<CR>
+nnoremap <LoalLeader>w <Plug>(sexp_round_head_wrap_element)
+nmap <C-M-q> =-
+
+function! SexpMoveRight()
+  let tmp_cur = getpos('.')
+  execute "normal \<Plug>(sexp_capture_next_element)"
+  execute "normal \<Plug>(sexp_indent)"
+  call setpos('.', tmp_cur)
+endfunction
+
+function! SexpMoveLeft()
+  let tmp_cur = getpos('.')
+  execute "normal \<Plug>(sexp_emit_tail_element)"
+  execute "normal \<Plug>(sexp_indent)"
+  call setpos('.', tmp_cur)
+endfunction
+
+function! SexpSplice()
+  let tmp_cur = getpos('.')
+  execute "normal \<Plug>(sexp_splice_list)"
+  execute "normal \<Plug>(sexp_indent)"
+  call setpos('.', tmp_cur)
+endfunction
+
+"Pareditの設定
+"nnoremap <silent> <M-h> :call PareditMoveLeft()<CR>
+"nnoremap <silent> <M-l> :call PareditMoveRight()<CR>
+"nnoremap <silent> <LocalLeader>@ :call PareditSplice()<CR>
+"nnoremap <silent> <LocalLeader>w :call PareditWrap("(",")")<CR>
 
 "Vlimeのキーマッピング
 "一部だけ上書きなどができないためコピーして編集している
@@ -411,5 +432,9 @@ let g:vlime_default_mappings = {
                     \ 'Show the next item in input history.'],
             \ ],
         \ }
+
+"vlimeを初期化
+"これによりindentexprなどが設定される
+call vlime#plugin#Setup()
 
 autocmd! FileType quickrun AnsiEsc

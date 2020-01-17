@@ -6,6 +6,8 @@ set runtimepath+=~/.vim/dein/repos/github.com/Shougo/dein.vim
 let g:python_host_prog = $PYENV_ROOT.'/versions/neovim2/bin/python'
 let g:python3_host_prog = $PYENV_ROOT.'/versions/neovim3/bin/python'
 
+let g:dein#auto_recache = 1
+
 if dein#load_state('~/.vim/dein')
   call dein#begin('~/.vim/dein')
 
@@ -26,13 +28,15 @@ if dein#load_state('~/.vim/dein')
   call dein#add('junegunn/goyo.vim')
   call dein#add('previm/previm')
   call dein#add('powerman/vim-plugin-AnsiEsc')
+  call dein#add('iberianpig/tig-explorer.vim')
 
   "Color Scheme
   call dein#add('sonph/onehalf', {'rtp': 'vim/'})
   call dein#add('vim-airline/vim-airline')
 
   "Common Lisp
-  call dein#add('fukamachi/vlime', {'rtp': 'vim/', 'on_cmd': ['VlimeStart', 'VlimeQlotExec'], 'rev': 'develop'})
+  "call dein#add('fukamachi/vlime', {'rtp': 'vim/', 'on_ft': 'lisp', 'rev': 'develop'})
+  call dein#add('~/Programs/etc/vlime/', {'rtp': 'vim/', 'on_ft': 'lisp'})
   call dein#add('guns/vim-sexp')
   call dein#add('tpope/vim-repeat')
   call dein#add('tpope/vim-surround')
@@ -60,6 +64,7 @@ set noswapfile
 set cursorline
 autocmd BufEnter * setlocal cursorline
 autocmd BufLeave * setlocal nocursorline
+highlight CursorLine cterm=NONE ctermbg=DarkGray
 
 set wildmenu
 set wildmode=longest:full,full
@@ -73,3 +78,11 @@ function! Config()
     edit ~/.config/nvim/conf/
 endfunction
 command! Config call Config()
+
+function! FileTypeConfig()
+  if &filetype != ''
+    let filename = "~/.config/nvim/ftplugin/" . &filetype . ".vim"
+    execute 'edit' filename
+  endif
+endfunction
+command! FileTypeConfig call FileTypeConfig()

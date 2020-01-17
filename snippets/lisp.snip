@@ -32,8 +32,16 @@ options head
     (in-package #:$1)
 
 snippet import
+alias :import
 abbr (:import-from ...)
+options head
     (:import-from #:${1:package-name}${2})
+
+snippet export
+alias :export
+abbr (:export ...)
+options head
+    (:export #:{0})
 
 snippet println
 abbr (format stream "~A~%" ...)

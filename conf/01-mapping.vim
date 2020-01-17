@@ -14,6 +14,3 @@ cnoremap <C-d> <Del>
 
 "Terminal Mode
 tnoremap <silent> <ESC> <C-\><C-n>
-
-"Insert mode
-"inoremap <silent> jj <Esc>j
