@@ -18,3 +18,13 @@ sh ./installer.sh ~/.vim/dein
 ```
 :call dein#install()
 ```
+
+### 4. Python3 support
+
+```
+brew install pyenv pyenv-virtualenv
+pyenv install 3.9.1
+pyenv virtualenv 3.9.1 neovim3
+pyenv activate neovim3
+pip install pynvim
+```
