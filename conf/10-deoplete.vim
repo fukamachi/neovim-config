@@ -1,5 +1,8 @@
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#auto_complete_delay = 200
+
+call deoplete#custom#option({
+            \ 'auto_complete_delay': 200,
+            \ })
 
 "imap <expr><TAB>
 " \ pumvisible() ? "\<C-n>" :
