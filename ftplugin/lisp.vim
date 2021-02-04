@@ -65,6 +65,7 @@ let g:sexp_mappings = {
     \ 'sexp_capture_next_element':      '',
     \ 'sexp_splice_list':               '',
     \ 'sexp_insert_closing_round':      '',
+    \ 'sexp_indent':                    '',
     \ }
 "飲み込み・吐き出し・展開時にインデントを修正
 nnoremap <silent> <M-h> :call SexpMoveLeft()<CR>

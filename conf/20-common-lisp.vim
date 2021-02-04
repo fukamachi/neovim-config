@@ -15,6 +15,16 @@ let g:vlime_window_settings = {
     \ 'server': {'pos': 'botright', 'size': v:null, 'vertical': v:true}
     \ }
 
+let g:vlime_indent_keywords = {
+  \ 'testing': 1,
+  \ 'testing-app': 1,
+  \ 'testing-api': 1,
+  \ 'testing-partner': 1,
+  \ 'testing-admin': 1,
+  \ 'testing-worker': 1,
+  \ 'testing-web': 1,
+  \ }
+
 function! VlimeBuildServerCommandFor_ros(vlime_loader, vlime_eval)
     return ["rlwrap", "ros", "run",
                \ "--load", s:vlime_path . "/lisp/load-vlime.lisp",
