@@ -7,7 +7,7 @@ function! s:common_lisp_my_mappings() abort
 endfunction
 call s:common_lisp_my_mappings()
 
-let g:vlime_cl_impl = "lem"
+let g:vlime_cl_impl = "mondo"
 let g:vlime_cl_use_terminal = v:true
 let s:vlime_path = '~/Programs/etc/vlime'
 
@@ -47,6 +47,16 @@ function! VlimeBuildServerCommandFor_sbcli(vlime_loader, vlime_eval)
     return ["ros", "-s", "sbcli",
                \ "--load", s:vlime_path . "/lisp/load-vlime.lisp",
                \ "--eval", a:vlime_eval, "--eval", "(sbcli/repl:main)"]
+endfunction
+
+function! VlimeBuildServerCommandFor_clrepl(vlime_loader, vlime_eval)
+    return ["cl-repl",
+                \ "--load", s:vlime_path . "/lisp/load-vlime.lisp",
+                \ "--eval", a:vlime_eval]
+endfunction
+
+function! VlimeBuildServerCommandFor_mondo(vlime_loader, vlime_eval)
+    return ["mondo", "--server", "vlime"]
 endfunction
 
 function! VlimeStart()
