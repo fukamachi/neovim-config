@@ -2,16 +2,20 @@ if &compatible
   set nocompatible
 endif
 
-set runtimepath+=~/.vim/dein/repos/github.com/Shougo/dein.vim
-let g:python_host_prog = $PYENV_ROOT.'/versions/neovim2/bin/python'
-let g:python3_host_prog = $PYENV_ROOT.'/versions/neovim3/bin/python'
+let g:python_host_prog = '/usr/bin/python'
+let g:python3_host_prog = '/usr/bin/python3'
 
 let g:dein#auto_recache = 1
 
-if dein#load_state('~/.vim/dein')
-  call dein#begin('~/.vim/dein')
+let s:dein_base = '/home/fukamachi/.cache/dein'
+let s:dein_src = '/home/fukamachi/.cache/dein/repos/github.com/Shougo/dein.vim'
 
-  call dein#add('~/.vim/dein/repos/github.com/Shougo/dein.vim')
+execute 'set runtimepath+=' . s:dein_src
+
+if dein#load_state(s:dein_base)
+  call dein#begin(s:dein_base)
+
+  call dein#add(s:dein_src)
   call dein#add('Shougo/deoplete.nvim')
   if !has('nvim')
     call dein#add('roxma/nvim-yarp')
@@ -36,7 +40,8 @@ if dein#load_state('~/.vim/dein')
 
   "Common Lisp
   "call dein#add('fukamachi/vlime', {'rtp': 'vim/', 'on_ft': 'lisp', 'rev': 'develop'})
-  call dein#add('~/Programs/etc/vlime/', {'rtp': 'vim/', 'on_ft': 'lisp'})
+  "call dein#add('~/Programs/etc/vlime/', {'rtp': 'vim/', 'on_ft': 'lisp'})
+  call dein#add('vlime/vlime', {'rtp': 'vim/', 'on_ft': 'lisp'})
   call dein#add('guns/vim-sexp')
   call dein#add('tpope/vim-repeat')
   call dein#add('tpope/vim-surround')
@@ -46,7 +51,19 @@ if dein#load_state('~/.vim/dein')
   call dein#add('dense-analysis/ale')  "This plugin is not specific for Python, though.
 
   call dein#end()
-  call dein#save_state()
+  "call dein#save_state()
+endif
+
+if has('filetype')
+  filetype indent plugin on
+endif
+
+if has('syntax')
+  syntax on
+endif
+
+if dein#check_install()
+ call dein#install()
 endif
 
 let mapleader = "\<Space>"
